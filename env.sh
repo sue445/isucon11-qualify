@@ -10,3 +10,4 @@ POST_ISUCONDITION_TARGET_BASE_URL="https://isucondition-1.t.isucon.dev"
 
 # host01
 MEMCACHED_HOST="192.168.0.11"
+REDIS_HOST="192.168.0.11"

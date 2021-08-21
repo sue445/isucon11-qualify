@@ -10,7 +10,7 @@
 
 # デプロイ先のサーバ
 HOSTS = {
-  host01: "18.181.130.91", # front, db, app(uploader)
+  host01: "18.181.130.91", # front, db, app(uploader), redis, memcached
   host02: "52.194.98.165",  # app(main)
   host03: "54.249.131.215", # app(main)
 }

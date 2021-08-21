@@ -12,6 +12,7 @@ require_relative "./config/sentry_methods"
 require_relative "./config/hash_to_json_with_oj"
 require_relative "./config/hash_group_by_prefix"
 require_relative "./config/memcached_methods"
+require_relative "./config/redis_methods"
 
 # TODO: 終了直前にコメントアウトする
 require_relative "./config/enable_monitoring"
@@ -24,6 +25,7 @@ module Isucondition
   class App < Sinatra::Base
     include SentryMethods
     include MemcachedMethods
+    include RedisMethods
 
     using HashToJsonWithOj
     using HashGroupByPrefix
