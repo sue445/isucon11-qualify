@@ -10,6 +10,7 @@ require 'mysql2-cs-bind'
 require_relative "./config/sentry_methods"
 
 require_relative "./config/hash_to_json_with_oj"
+require_relative "./config/hash_group_by_prefix"
 require_relative "./config/memcached_methods"
 
 # TODO: 終了直前にコメントアウトする
@@ -25,6 +26,7 @@ module Isucondition
     include MemcachedMethods
 
     using HashToJsonWithOj
+    using HashGroupByPrefix
 
     configure :development do
       require 'sinatra/reloader'
