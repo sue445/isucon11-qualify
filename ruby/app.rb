@@ -742,7 +742,7 @@ module Isucondition
           sql_values << "('#{jia_isu_uuid}', '#{cond.fetch(:timestamp)}', '#{cond.fetch(:is_sitting)}', '#{cond.fetch(:condition)}', '#{cond.fetch(:message)}'), "
         end
         sql = sql_prefix + sql_values.delete_suffix(", ")
-        db.xquery.xquery(sql)
+        db.xquery(sql)
       end
 
       status 202
