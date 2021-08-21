@@ -12,7 +12,7 @@ require_relative "./config/sentry_methods"
 # TODO: 終了直前にコメントアウトする
 require_relative "./config/enable_monitoring"
 
-$index_html = File.read(File.join(Isucondition::App::FRONTEND_CONTENTS_PATH, 'index.html'))
+$index_html = File.read(File.join("../public", 'index.html'))
 
 module Isucondition
   class App < Sinatra::Base
