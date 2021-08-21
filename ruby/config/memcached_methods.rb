@@ -44,6 +44,11 @@ module MemcachedMethods
         image: isu.fetch(:image)
       )
     end
+
+    rows = db.xquery("SELECT * FROM isu_condition")
+    rows.each do |isu_condition|
+      save_latest_isu_condition_to_memcached(isu_condition)
+    end
   end
 
   def save_isu_image_to_memcached(jia_user_id:, jia_isu_uuid:, image:)
@@ -56,6 +61,24 @@ module MemcachedMethods
   def get_isu_image_from_memcached(jia_user_id:, jia_isu_uuid:)
     $memcached.with do |conn|
       cache_key = "isu-image-#{jia_user_id}-#{jia_isu_uuid}"
+      conn.get(cache_key)
+    end
+  end
+
+  def save_latest_isu_condition_to_memcached(isu_condition)
+    $memcached.with do |conn|
+      cache_key = "latest-isu-condition-#{isu_condition.fetch(:jia_isu_uuid)}"
+
+      current = conn.get(cache_key)
+      if !current || isu_condition[:timestamp] >= current[:timestamp]
+        conn.set(cache_key, isu_condition)
+      end
+    end
+  end
+
+  def get_latest_isu_condition_from_memcached(jia_isu_uuid)
+    $memcached.with do |conn|
+      cache_key = "latest-isu-condition-#{jia_isu_uuid}"
       conn.get(cache_key)
     end
   end
