@@ -435,17 +435,17 @@ module Isucondition
       #
       # isu.fetch(:image)
 
-      # image = get_isu_image_file(jia_user_id: jia_user_id, jia_isu_uuid: jia_isu_uuid)
-      # unless image
-      #   halt_error 404, 'not found: isu'
-      # end
-      # image
-
-      path = get_isu_image_file_path(jia_user_id: jia_user_id, jia_isu_uuid: jia_isu_uuid)
-      unless path
+      image = get_isu_image_file(jia_user_id: jia_user_id, jia_isu_uuid: jia_isu_uuid)
+      unless image
         halt_error 404, 'not found: isu'
       end
-      redirect to(path), 304
+      image
+
+      # path = get_isu_image_file_path(jia_user_id: jia_user_id, jia_isu_uuid: jia_isu_uuid)
+      # unless path
+      #   halt_error 404, 'not found: isu'
+      # end
+      # redirect to(path), 304
     end
 
     # ISUのコンディショングラフ描画のための情報を取得
