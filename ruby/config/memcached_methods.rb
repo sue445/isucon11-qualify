@@ -19,12 +19,18 @@ module MemcachedMethods
     end
 
     $memcached.with do |conn|
-      cached_response = conn.get(cache_key)
-      return cached_response if cached_response
+      begin
+        cached_response = conn.get(cache_key)
+        return cached_response if cached_response
+      rescue Dalli::RingError
+      end
 
       actual = yield
 
-      conn.set(cache_key, actual)
+      begin
+        conn.set(cache_key, actual)
+      rescue Dalli::RingError
+      end
 
       actual
     end
