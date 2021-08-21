@@ -1,0 +1,66 @@
+#
+# This file configures the New Relic Agent.  New Relic monitors Ruby, Java,
+# .NET, PHP, Python, Node, and Go applications with deep visibility and low
+# overhead.  For more information, visit www.newrelic.com.
+#
+# Generated May 31, 2021, for version 7.0.0
+#
+# For full documentation of agent configuration options, please refer to
+# https://docs.newrelic.com/docs/agents/ruby-agent/installation-configuration/ruby-agent-configuration
+
+common: &default_settings
+  # Required license key associated with your New Relic account.
+  # license_key: 環境変数のNEW_RELIC_LICENSE_KEYから取る
+
+  # Your application name. Renaming here affects where data displays in New
+  # Relic.  For more details, see https://docs.newrelic.com/docs/apm/new-relic-apm/maintenance/renaming-applications
+  app_name: isuconXX-qualify
+
+  # To disable the agent regardless of other settings, uncomment the following:
+  # agent_enabled: false
+
+  # Logging level for log/newrelic_agent.log
+  log_level: error
+
+  transaction_tracer:
+    explain_enabled: true
+
+  slow_sql:
+    enabled: true
+    explain_enabled: true
+    record_sql: raw
+    explain_threshold: 0.01
+
+  thread_profiler:
+    enabled: true
+
+  agent_enabled: true
+  monitor_mode: true
+
+# Environment-specific settings are in this section.
+# RAILS_ENV or RACK_ENV (as appropriate) is used to determine the environment.
+# If your application has other named environments, configure them here.
+development:
+  <<: *default_settings
+  app_name: isuconXX-qualify (Development)
+
+staging:
+  <<: *default_settings
+  app_name: isuconXX-qualify (Staging)
+
+production:
+  <<: *default_settings
+
+# TODO: 終了直前に諸々無効化する
+#  agent_enabled: false
+#  monitor_mode: false
+#
+#  transaction_tracer:
+#    explain_enabled: false
+#
+#  slow_sql:
+#    enabled: false
+#    explain_enabled: false
+#
+#  thread_profiler:
+#    enabled: false
