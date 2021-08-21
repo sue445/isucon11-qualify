@@ -96,17 +96,20 @@ module Isucondition
 
     helpers do
       def create_isu_dir(jia_isu_uuid)
-        dirs = [
-          # File.join(PUBLIC_BASE_ISU_DIR, jia_isu_uuid),
-          File.join(PUBLIC_BASE_ISU_DIR, jia_isu_uuid, "condition"),
-          File.join(PUBLIC_BASE_ISU_DIR, jia_isu_uuid, "graph"),
-        ]
-        FileUtils.mkdir_p dirs
-
-        # FileUtils.cp(PUBLIC_INDEX_PATH, File.join(PUBLIC_BASE_ISU_DIR, jia_isu_uuid))
-        dirs.each do |dir|
-          FileUtils.cp(PUBLIC_INDEX_PATH, File.join(dir, "index.html"))
-        end
+        # dirs = [
+        #   # File.join(PUBLIC_BASE_ISU_DIR, jia_isu_uuid),
+        #   File.join(PUBLIC_BASE_ISU_DIR, jia_isu_uuid, "condition"),
+        #   File.join(PUBLIC_BASE_ISU_DIR, jia_isu_uuid, "graph"),
+        # ]
+        # FileUtils.mkdir_p dirs
+        #
+        # # FileUtils.cp(PUBLIC_INDEX_PATH, File.join(PUBLIC_BASE_ISU_DIR, jia_isu_uuid))
+        # dirs.each do |dir|
+        #   FileUtils.cp(PUBLIC_INDEX_PATH, File.join(dir, "index.html"))
+        # end
+        File.join(PUBLIC_BASE_ISU_DIR, jia_isu_uuid)
+        FileUtils.cp(PUBLIC_INDEX_PATH, File.join(PUBLIC_BASE_ISU_DIR, jia_isu_uuid, "graph"))
+        FileUtils.cp(PUBLIC_INDEX_PATH, File.join(PUBLIC_BASE_ISU_DIR, jia_isu_uuid, "condition"))
       end
 
       # ref. https://github.com/tagomoris/mysql2-cs-bind/blob/v0.1.0/lib/mysql2-cs-bind.rb#L45-L57
