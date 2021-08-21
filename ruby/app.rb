@@ -85,8 +85,26 @@ module Isucondition
 
     helpers do
       def save_isu_image_file(jia_user_id:, jia_isu_uuid:, image:)
+        assert_front!
         File.open(File.join(ISU_UPLOAD_DIR, "#{jia_user_id}_#{jia_isu_uuid}"), "wb") do |f|
           f.write(image)
+        end
+      end
+
+      def get_isu_image_file(jia_user_id:, jia_isu_uuid:)
+        assert_front!
+
+        path = File.join(ISU_UPLOAD_DIR, "#{jia_user_id}_#{jia_isu_uuid}")
+        if File.exists?(path)
+          return false
+        end
+        File.read(path)
+      end
+
+      def assert_front!
+        hostname = `hostname`.strip
+        unless hostname == "isucon11-qualify-01"
+          raise "Expected isucon11-qualify-01, but #{hostname}"
         end
       end
 
@@ -380,11 +398,17 @@ module Isucondition
       jia_user_id = user_id_from_session
       halt_error 401, 'you are not signed in' unless jia_user_id
 
-      jia_isu_uuid = params[:jia_isu_uuid]
-      isu = db.xquery('SELECT `image` FROM `isu` WHERE `jia_user_id` = ? AND `jia_isu_uuid` = ?', jia_user_id, jia_isu_uuid).first
-      halt_error 404, 'not found: isu' unless isu
+      # jia_isu_uuid = params[:jia_isu_uuid]
+      # isu = db.xquery('SELECT `image` FROM `isu` WHERE `jia_user_id` = ? AND `jia_isu_uuid` = ?', jia_user_id, jia_isu_uuid).first
+      # halt_error 404, 'not found: isu' unless isu
+      #
+      # isu.fetch(:image)
 
-      isu.fetch(:image)
+      image = get_isu_image_file(jia_user_id: jia_user_id, jia_isu_uuid: jia_isu_uuid)
+      unless image
+        halt_error 404, 'not found: isu'
+      end
+      image
     end
 
     # ISUのコンディショングラフ描画のための情報を取得
