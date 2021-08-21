@@ -46,6 +46,7 @@ GEM
     rack (2.2.3)
     rack-protection (2.1.0)
       rack
+    redis (4.4.0)
     ruby2_keywords (0.0.5)
     sentry-ruby (4.6.5)
       concurrent-ruby (~> 1.0, >= 1.0.2)
@@ -82,6 +83,7 @@ DEPENDENCIES
   parallel
   puma
   puma_worker_killer
+  redis
   sentry-ruby
   sinatra
   sinatra-contrib
