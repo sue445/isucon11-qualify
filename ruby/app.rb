@@ -84,6 +84,12 @@ module Isucondition
     end
 
     helpers do
+      def save_isu_image_file(id, image)
+        File.open(File.join(ISU_UPLOAD_DIR, id), "wb") do |f|
+          f.write(image)
+        end
+      end
+
       def json_params
         @json_params ||= JSON.parse(request.body.tap(&:rewind).read, symbolize_names: true)
       end
@@ -195,9 +201,7 @@ module Isucondition
       system_with_sentry "rm -rf #{ISU_UPLOAD_DIR}/*"
       rows = db.xquery("SELECT id, image FROM isu")
       rows.each do |isu|
-        File.open(File.join(ISU_UPLOAD_DIR, isu[:id]), "wb") do |f|
-          f.write(isu.fetch(:image))
-        end
+        save_isu_image_file(isu[:id], isu.fetch(:image))
       end
 
       content_type :json
@@ -330,6 +334,8 @@ module Isucondition
         db.xquery('UPDATE `isu` SET `character` = ? WHERE  `jia_isu_uuid` = ?', isu_from_jia.fetch(:character), jia_isu_uuid)
         db.xquery('SELECT * FROM `isu` WHERE `jia_user_id` = ? AND `jia_isu_uuid` = ?', jia_user_id, jia_isu_uuid).first
       end
+
+      save_isu_image_file(isu.fetch(:id), isu.fetch(:image))
 
       status 201
       content_type :json
