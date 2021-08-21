@@ -1,7 +1,7 @@
 require "dalli"
 require "connection_pool"
 
-$memcached = ConnectionPool.new(size: 32, timeout: 5) { Dalli::Client.new("#{ENV["MEMCACHED_HOST"]}:11211", compress: true) }
+$memcached = ConnectionPool.new(size: 100, timeout: 5) { Dalli::Client.new("#{ENV["MEMCACHED_HOST"]}:11211", compress: true) }
 
 module MemcachedMethods
   # memcachedにあればmemcachedから取得し、キャッシュになければブロック内の処理で取得しmemcachedに保存するメソッド（Rails.cache.fetchと同様のメソッド）
