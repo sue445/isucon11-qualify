@@ -445,7 +445,7 @@ module Isucondition
       unless path
         halt_error 404, 'not found: isu'
       end
-      redirect to(path), 301
+      redirect to(path), 304
     end
 
     # ISUのコンディショングラフ描画のための情報を取得
