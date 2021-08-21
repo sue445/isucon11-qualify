@@ -12,6 +12,8 @@ require_relative "./config/sentry_methods"
 # TODO: 終了直前にコメントアウトする
 require_relative "./config/enable_monitoring"
 
+$index_html = File.read(File.join(FRONTEND_CONTENTS_PATH, 'index.html'))
+
 module Isucondition
   class App < Sinatra::Base
     include SentryMethods
@@ -680,7 +682,8 @@ module Isucondition
     ].each do |_|
       get _ do
         content_type :html
-        File.read(File.join(FRONTEND_CONTENTS_PATH, 'index.html'))
+        # File.read(File.join(FRONTEND_CONTENTS_PATH, 'index.html'))
+        $index_html
       end
     end
   end
