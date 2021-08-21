@@ -50,6 +50,21 @@ module RedisMethods
 
   def initialize_redis
     $redis.flushall
+
+    # isuのimageをredisに保存
+    rows = db.xquery("SELECT jia_user_id, jia_isu_uuid, image FROM isu")
+    rows.each do |isu|
+      save_isu_image_to_redis(
+        jia_user_id: isu.fetch(:jia_user_id),
+        jia_isu_uuid: isu.fetch(:jia_isu_uuid),
+        image: isu.fetch(:image)
+      )
+    end
+
+    rows = db.xquery("SELECT * FROM isu_condition")
+    rows.each do |isu_condition|
+      save_latest_isu_condition_to_redis(isu_condition)
+    end
   end
 
   def clear_isu_graph_response_from_redis(jia_isu_uuid)
