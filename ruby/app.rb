@@ -845,6 +845,12 @@ module Isucondition
       #   save_latest_isu_condition_to_memcached(row)
       # end
 
+      # DB更新後にredisに入れる
+      rows = db.xquery("SELECT * FROM isu_condition WHERE jia_isu_uuid IN (?)", jia_isu_uuids)
+      rows.each do |row|
+        save_latest_isu_condition_to_redis(row)
+      end
+
       # DB更新後にグラフデータをredisから消す
       jia_isu_uuids.each do |uuid|
         clear_isu_graph_response_from_redis(uuid)
