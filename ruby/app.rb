@@ -521,83 +521,85 @@ module Isucondition
 
     # グラフのデータ点を一日分生成
     def generate_isu_graph_response(jia_isu_uuid, graph_date)
-      rows = db.xquery('SELECT * FROM `isu_condition` WHERE `jia_isu_uuid` = ? ORDER BY `timestamp` ASC', jia_isu_uuid)
+      with_memcached("generate_isu_graph_response-#{jia_isu_uuid}-#{graph_date}-#{Time.now.to_i}") do
+        rows = db.xquery('SELECT * FROM `isu_condition` WHERE `jia_isu_uuid` = ? ORDER BY `timestamp` ASC', jia_isu_uuid)
 
-      data_points = []
-      start_time_in_this_hour = Time.at(0)
-      conditions_in_this_hour = []
-      timestamps_in_this_hour = []
+        data_points = []
+        start_time_in_this_hour = Time.at(0)
+        conditions_in_this_hour = []
+        timestamps_in_this_hour = []
 
-      rows.each do |condition|
-        timestamp = condition.fetch(:timestamp)
-        truncated_condition_time = Time.new(timestamp.year, timestamp.month, timestamp.day, timestamp.hour, 0, 0)
-        if truncated_condition_time != start_time_in_this_hour
-          unless conditions_in_this_hour.empty?
-            data = calculate_graph_data_point(conditions_in_this_hour)
-            data_points.push(
-              jia_isu_uuid: jia_isu_uuid,
-              start_at: start_time_in_this_hour,
-              data: data,
-              condition_timestamps: timestamps_in_this_hour,
+        rows.each do |condition|
+          timestamp = condition.fetch(:timestamp)
+          truncated_condition_time = Time.new(timestamp.year, timestamp.month, timestamp.day, timestamp.hour, 0, 0)
+          if truncated_condition_time != start_time_in_this_hour
+            unless conditions_in_this_hour.empty?
+              data = calculate_graph_data_point(conditions_in_this_hour)
+              data_points.push(
+                jia_isu_uuid: jia_isu_uuid,
+                start_at: start_time_in_this_hour,
+                data: data,
+                condition_timestamps: timestamps_in_this_hour,
+                )
+            end
+
+            start_time_in_this_hour = truncated_condition_time
+            conditions_in_this_hour = []
+            timestamps_in_this_hour = []
+          end
+          conditions_in_this_hour.push(condition)
+          timestamps_in_this_hour.push(condition.fetch(:timestamp).to_i)
+        end
+
+        unless conditions_in_this_hour.empty?
+          data = calculate_graph_data_point(conditions_in_this_hour)
+          data_points.push(
+            jia_isu_uuid: jia_isu_uuid,
+            start_at: start_time_in_this_hour,
+            data: data,
+            condition_timestamps: timestamps_in_this_hour,
             )
-          end
-
-          start_time_in_this_hour = truncated_condition_time
-          conditions_in_this_hour = []
-          timestamps_in_this_hour = []
-        end
-        conditions_in_this_hour.push(condition)
-        timestamps_in_this_hour.push(condition.fetch(:timestamp).to_i)
-      end
-
-      unless conditions_in_this_hour.empty?
-        data = calculate_graph_data_point(conditions_in_this_hour)
-        data_points.push(
-          jia_isu_uuid: jia_isu_uuid,
-          start_at: start_time_in_this_hour,
-          data: data,
-          condition_timestamps: timestamps_in_this_hour,
-        )
-      end
-
-      end_time = graph_date + (3600 * 24)
-      start_index = data_points.size
-      end_next_index = data_points.size
-
-      data_points.each_with_index do |graph, i|
-        start_index = i if start_index == data_points.size && graph.fetch(:start_at) >= graph_date
-        end_next_index = i if end_next_index == data_points.size && graph.fetch(:start_at) > end_time
-      end
-
-      filtered_data_points = []
-      filtered_data_points = data_points[start_index...end_next_index] if start_index < end_next_index
-
-      response_list = []
-      index = 0
-      this_time = graph_date
-
-      while this_time < (graph_date + (3600*24))
-        data = nil
-        timestamps = []
-        if index < filtered_data_points.size
-          data_with_info = filtered_data_points[index]
-          if data_with_info.fetch(:start_at) == this_time
-            data = data_with_info.fetch(:data)
-            timestamps = data_with_info.fetch(:condition_timestamps)
-            index += 1
-          end
         end
 
-        response_list.push(
-          start_at: this_time.to_i,
-          end_at: (this_time + 3600).to_i,
-          data: data,
-          condition_timestamps: timestamps,
-        )
-        this_time += 3600
-      end
+        end_time = graph_date + (3600 * 24)
+        start_index = data_points.size
+        end_next_index = data_points.size
 
-      response_list
+        data_points.each_with_index do |graph, i|
+          start_index = i if start_index == data_points.size && graph.fetch(:start_at) >= graph_date
+          end_next_index = i if end_next_index == data_points.size && graph.fetch(:start_at) > end_time
+        end
+
+        filtered_data_points = []
+        filtered_data_points = data_points[start_index...end_next_index] if start_index < end_next_index
+
+        response_list = []
+        index = 0
+        this_time = graph_date
+
+        while this_time < (graph_date + (3600*24))
+          data = nil
+          timestamps = []
+          if index < filtered_data_points.size
+            data_with_info = filtered_data_points[index]
+            if data_with_info.fetch(:start_at) == this_time
+              data = data_with_info.fetch(:data)
+              timestamps = data_with_info.fetch(:condition_timestamps)
+              index += 1
+            end
+          end
+
+          response_list.push(
+            start_at: this_time.to_i,
+            end_at: (this_time + 3600).to_i,
+            data: data,
+            condition_timestamps: timestamps,
+            )
+          this_time += 3600
+        end
+
+        response_list
+      end
     end
 
     # 複数のISUのコンディションからグラフの一つのデータ点を計算
