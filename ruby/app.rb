@@ -293,7 +293,7 @@ module Isucondition
       # end
 
       system_with_sentry "rm -rf #{PUBLIC_BASE_ISU_DIR}/*"
-      uuids = db.xquery("SELECT jia_isu_uuid FROM isu").map(&:jia_isu_uuid)
+      uuids = db.xquery("SELECT jia_isu_uuid FROM isu").map { |row | row[:jia_isu_uuid] }
       uuids.each do |uuid|
         create_isu_dir(uuid)
       end
