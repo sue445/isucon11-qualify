@@ -524,7 +524,7 @@ module Isucondition
 
     # グラフのデータ点を一日分生成
     def generate_isu_graph_response(jia_isu_uuid, graph_date)
-      with_redis("generate_isu_graph_response:#{jia_isu_uuid}:#{graph_date}") do
+      with_redis("generate_isu_graph_response:#{jia_isu_uuid}:#{graph_date}", is_object: true) do
         rows = db.xquery('SELECT * FROM `isu_condition` WHERE `jia_isu_uuid` = ? ORDER BY `timestamp` ASC', jia_isu_uuid)
 
         data_points = []
