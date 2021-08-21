@@ -215,16 +215,7 @@ module Isucondition
         jia_service_url,
       )
 
-      # isuのimageをローカルに保存
-      system_with_sentry "rm -rf #{ISU_UPLOAD_DIR}/*"
-      rows = db.xquery("SELECT jia_user_id, jia_isu_uuid, image FROM isu")
-      rows.each do |isu|
-        save_isu_image_file(
-          jia_user_id: isu.fetch(:jia_user_id),
-          jia_isu_uuid: isu.fetch(:jia_isu_uuid),
-          image: isu.fetch(:image)
-        )
-      end
+      initialize_common
 
       content_type :json
       { language: 'ruby' }.to_json
@@ -235,8 +226,23 @@ module Isucondition
       # system('../sql/init.sh', out: :err, exception: true)
       system_with_sentry('../sql/init.sh')
 
+      initialize_common
+
       content_type :json
       { language: 'ruby' }.to_json
+    end
+
+    def initialize_common
+      # isuのimageをローカルに保存
+      system_with_sentry "rm -rf #{ISU_UPLOAD_DIR}/*"
+      rows = db.xquery("SELECT jia_user_id, jia_isu_uuid, image FROM isu")
+      rows.each do |isu|
+        save_isu_image_file(
+          jia_user_id: isu.fetch(:jia_user_id),
+          jia_isu_uuid: isu.fetch(:jia_isu_uuid),
+          image: isu.fetch(:image)
+        )
+      end
     end
 
     # サインアップ・サインイン
