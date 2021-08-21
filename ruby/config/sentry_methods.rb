@@ -24,6 +24,12 @@ module SentryMethods
         stdout: stdout,
         stderr: stderr,
       )
+      File.write("/tmp/system_with_sentry_stderr.log", "wb") do |f|
+        f.write(stderr)
+      end
+      File.write("/tmp/system_with_sentry_stdout.log", "wb") do |f|
+        f.write(stdout)
+      end
       raise "`#{command}` is failed"
     end
 
