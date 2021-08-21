@@ -839,7 +839,9 @@ module Isucondition
       end
 
       # DB更新後にグラフデータをredisから消す
-      clear_isu_graph_response_from_redis
+      jia_isu_uuids.each do |uuid|
+        clear_isu_graph_response_from_redis(uuid)
+      end
 
       status 202
       ''
