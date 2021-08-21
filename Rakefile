@@ -11,8 +11,8 @@
 # デプロイ先のサーバ
 HOSTS = {
   host01: "18.181.130.91", # front, db, app(uploader)
-  # host02: "54.249.131.215",
-  host03: "52.194.98.165", # app(main)
+  host02: "52.194.98.165",  # app(main)
+  host03: "54.249.131.215", # app(main)
 }
 
 INITIALIZE_ENDPOINT = "https://isucondition.t.isucon.dev/initialize_from_local"
