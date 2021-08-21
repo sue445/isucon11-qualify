@@ -95,7 +95,7 @@ module Isucondition
         assert_front!
 
         path = File.join(ISU_UPLOAD_DIR, "#{jia_user_id}_#{jia_isu_uuid}")
-        if File.exists?(path)
+        unless File.exists?(path)
           return false
         end
         File.read(path)
