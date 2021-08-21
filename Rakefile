@@ -21,7 +21,7 @@ INITIALIZE_ENDPOINT = "http://#{HOSTS[:host01]}/initialize"
 CURRENT_DIR = "/home/isucon/webapp"
 
 # rubyアプリのディレクトリ
-RUBY_APP_DIR = "/home/isuconwebapp/webapp/ruby"
+RUBY_APP_DIR = "/home/isucon/webapp/ruby"
 
 # アプリのservice名
 APP_SERVICE_NAME = "isucondition.ruby.service"
