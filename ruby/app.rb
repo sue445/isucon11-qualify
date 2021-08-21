@@ -9,6 +9,8 @@ require 'mysql2-cs-bind'
 # TODO: Sinatra app内で include SentryMethods する
 require_relative "./config/sentry_methods"
 
+require_relative "./config/hash_to_json_with_oj"
+
 # TODO: 終了直前にコメントアウトする
 require_relative "./config/enable_monitoring"
 
@@ -19,6 +21,7 @@ ISU_UPLOAD_DIR = "/home/isucon/webapp/public/uploads/isu"
 module Isucondition
   class App < Sinatra::Base
     include SentryMethods
+    using HashToJsonWithOj
 
     configure :development do
       require 'sinatra/reloader'
