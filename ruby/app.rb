@@ -84,8 +84,8 @@ module Isucondition
     end
 
     helpers do
-      def save_isu_image_file(id, image)
-        File.open(File.join(ISU_UPLOAD_DIR, id), "wb") do |f|
+      def save_isu_image_file(jia_user_id:, jia_isu_uuid:, image:)
+        File.open(File.join(ISU_UPLOAD_DIR, "#{jia_user_id}_#{jia_isu_uuid}"), "wb") do |f|
           f.write(image)
         end
       end
@@ -199,9 +199,13 @@ module Isucondition
 
       # isuのimageをローカルに保存
       system_with_sentry "rm -rf #{ISU_UPLOAD_DIR}/*"
-      rows = db.xquery("SELECT id, image FROM isu")
+      rows = db.xquery("SELECT jia_user_id, jia_isu_uuid, image FROM isu")
       rows.each do |isu|
-        save_isu_image_file(isu[:id], isu.fetch(:image))
+        save_isu_image_file(
+          jia_user_id: isu.fetch(:jia_user_id),
+          jia_isu_uuid: isu.fetch(:jia_isu_uuid),
+          image: isu.fetch(:image)
+        )
       end
 
       content_type :json
@@ -335,7 +339,11 @@ module Isucondition
         db.xquery('SELECT * FROM `isu` WHERE `jia_user_id` = ? AND `jia_isu_uuid` = ?', jia_user_id, jia_isu_uuid).first
       end
 
-      save_isu_image_file(isu.fetch(:id), isu.fetch(:image))
+      save_isu_image_file(
+        jia_user_id: isu.fetch(:jia_user_id),
+        jia_isu_uuid: isu.fetch(:jia_isu_uuid),
+        image: isu.fetch(:image)
+      )
 
       status 201
       content_type :json
