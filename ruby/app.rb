@@ -193,6 +193,15 @@ module Isucondition
       { language: 'ruby' }.to_json
     end
 
+    # ローカルのデプロイスクリプトから叩く用
+    post '/initialize_from_local' do
+      # system('../sql/init.sh', out: :err, exception: true)
+      system_with_sentry('../sql/init.sh')
+
+      content_type :json
+      { language: 'ruby' }.to_json
+    end
+
     # サインアップ・サインイン
     post '/api/auth' do
       req_jwt = request.env['HTTP_AUTHORIZATION']&.delete_prefix('Bearer ')

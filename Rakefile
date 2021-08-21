@@ -15,7 +15,7 @@ HOSTS = {
   # host03: "54.249.131.215",
 }
 
-INITIALIZE_ENDPOINT = "https://isucondition.t.isucon.dev/initialize"
+INITIALIZE_ENDPOINT = "https://isucondition.t.isucon.dev/initialize_from_local"
 
 # デプロイ先のカレントディレクトリ
 CURRENT_DIR = "/home/isucon/webapp"
@@ -149,7 +149,7 @@ multitask :deploy => HOSTS.keys.map { |name| "deploy:#{name}" }
 
 desc "POST /initialize"
 task :initialize do
-  # sh "curl -X POST --retry 3 --fail #{INITIALIZE_ENDPOINT}"
+  sh "curl -X POST --retry 3 --fail #{INITIALIZE_ENDPOINT}"
 end
 
 desc "Record current commit to issue"
