@@ -10,24 +10,24 @@
 
 # デプロイ先のサーバ
 HOSTS = {
-  host01: "",
-  # host02: "",
-  # host03: "",
+  host01: "18.181.130.91",
+  # host02: "52.194.98.165",
+  # host03: "54.249.131.215",
 }
 
 INITIALIZE_ENDPOINT = "http://#{HOSTS[:host01]}/initialize"
 
 # デプロイ先のカレントディレクトリ
-CURRENT_DIR = "/home/isucon/isutrain"
+CURRENT_DIR = "/home/isucon/webapp"
 
 # rubyアプリのディレクトリ
-RUBY_APP_DIR = "/home/isucon/isutrain/webapp/ruby"
+RUBY_APP_DIR = "/home/isuconwebapp/ruby"
 
 # アプリのservice名
-APP_SERVICE_NAME = "isutrain-ruby.service"
+APP_SERVICE_NAME = "54.249.131.215"
 
 # デプロイを記録するissue
-GITHUB_REPO     = "sue445/isuconXX-qualify"
+GITHUB_REPO     = "sue445/isucon11-qualify"
 GITHUB_ISSUE_ID = 1
 
 BUNDLE = "/home/isucon/local/ruby/bin/bundle"
@@ -60,41 +60,41 @@ namespace :deploy do
       # mysql
       case name
       when :host01
-        # exec ip_address, "sudo cp infra/mysql/mysqld.cnf /etc/mysql/mysql.conf.d/mysqld.cnf"
-        # exec ip_address, "sudo mysqld --verbose --help > /dev/null"
-        # exec ip_address, "sudo systemctl restart mysql"
+        exec ip_address, "sudo cp infra/mariadb/50-server.cnf /etc/mysql/mariadb.conf.d/50-server.cnf"
+        exec ip_address, "sudo mysqld --verbose --help > /dev/null"
+        exec ip_address, "sudo systemctl restart mariadb"
       else
-        # exec ip_address, "sudo systemctl stop mysql"
+        exec ip_address, "sudo systemctl stop mariadb"
       end
 
       # nginx
       case name
       when :host01
-        # exec ip_address, "sudo cp infra/nginx/nginx.conf /etc/nginx/nginx.conf"
-        # exec ip_address, "sudo nginx -t"
-        # exec ip_address, "sudo rm -f /var/log/nginx/*.log"
-        # exec ip_address, "sudo systemctl restart nginx"
+        exec ip_address, "sudo cp infra/nginx/nginx.conf /etc/nginx/nginx.conf"
+        exec ip_address, "sudo nginx -t"
+        exec ip_address, "sudo rm -f /var/log/nginx/*.log"
+        exec ip_address, "sudo systemctl restart nginx"
       else
-        # exec ip_address, "sudo systemctl stop nginx"
+        exec ip_address, "sudo systemctl stop nginx"
       end
 
       # app
       case name
       when :host01
-        # exec ip_address, "#{BUNDLE} install --path vendor/bundle --jobs $(nproc)", cwd: RUBY_APP_DIR
-        # exec ip_address, "#{BUNDLE} config set --local path 'vendor/bundle'", cwd: RUBY_APP_DIR
-        # exec ip_address, "#{BUNDLE} config set --local jobs $(nproc)", cwd: RUBY_APP_DIR
-        # exec ip_address, "#{BUNDLE} install", cwd: RUBY_APP_DIR
+        exec ip_address, "#{BUNDLE} install --path vendor/bundle --jobs $(nproc)", cwd: RUBY_APP_DIR
+        exec ip_address, "#{BUNDLE} config set --local path 'vendor/bundle'", cwd: RUBY_APP_DIR
+        exec ip_address, "#{BUNDLE} config set --local jobs $(nproc)", cwd: RUBY_APP_DIR
+        exec ip_address, "#{BUNDLE} install", cwd: RUBY_APP_DIR
 
-        # exec ip_address, "sudo systemctl stop #{APP_SERVICE_NAME}"
-        # exec ip_address, "sudo systemctl start #{APP_SERVICE_NAME}"
-        # exec ip_address, "sudo systemctl status #{APP_SERVICE_NAME}"
+        exec ip_address, "sudo systemctl stop #{APP_SERVICE_NAME}"
+        exec ip_address, "sudo systemctl start #{APP_SERVICE_NAME}"
+        exec ip_address, "sudo systemctl status #{APP_SERVICE_NAME}"
       else
-        # exec ip_address, "sudo systemctl stop #{APP_SERVICE_NAME}"
+        exec ip_address, "sudo systemctl stop #{APP_SERVICE_NAME}"
       end
 
-      # exec ip_address, "sudo rm -f /tmp/sql.log"
-      # exec ip_address, "rm -rf tmp/stackprof/*", cwd: RUBY_APP_DIR
+      exec ip_address, "sudo rm -f /tmp/sql.log"
+      exec ip_address, "rm -rf tmp/stackprof/*", cwd: RUBY_APP_DIR
 
       # memcached
       case name
