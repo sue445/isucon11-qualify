@@ -93,7 +93,7 @@ module RedisMethods
     cache_key = "latest-isu-condition-#{isu_condition.fetch(:jia_isu_uuid)}"
 
     cache = $redis.get(cache_key)
-    if !cache
+    if cache
       current = Oj.load(cache)
 
       if isu_condition[:timestamp] >= current["timestamp"]
