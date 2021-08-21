@@ -117,6 +117,11 @@ module Isucondition
       end
 
       def get_isu_image_file_path(jia_user_id:, jia_isu_uuid:)
+        path = File.join(ISU_UPLOAD_DIR, "#{jia_user_id}_#{jia_isu_uuid}")
+        unless File.exists?(path)
+          return nil
+        end
+
         "/uploads/isu/#{jia_user_id}_#{jia_isu_uuid}"
       end
 
@@ -430,11 +435,17 @@ module Isucondition
       #
       # isu.fetch(:image)
 
-      image = get_isu_image_file(jia_user_id: jia_user_id, jia_isu_uuid: jia_isu_uuid)
-      unless image
+      # image = get_isu_image_file(jia_user_id: jia_user_id, jia_isu_uuid: jia_isu_uuid)
+      # unless image
+      #   halt_error 404, 'not found: isu'
+      # end
+      # image
+
+      path = get_isu_image_file_path(jia_user_id: jia_user_id, jia_isu_uuid: jia_isu_uuid)
+      unless path
         halt_error 404, 'not found: isu'
       end
-      image
+      redirect to(path), 301
     end
 
     # ISUのコンディショングラフ描画のための情報を取得
