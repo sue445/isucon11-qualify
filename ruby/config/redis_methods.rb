@@ -51,4 +51,9 @@ module RedisMethods
   def initialize_redis
     $redis.flushall
   end
+
+  def clear_isu_graph_response_from_redis(jia_isu_uuid)
+    keys = $redis.keys("generate_isu_graph_response:#{jia_isu_uuid}:*")
+    $redis.del(*keys)
+  end
 end
