@@ -84,6 +84,21 @@ module Isucondition
     end
 
     helpers do
+      # ref. https://github.com/tagomoris/mysql2-cs-bind/blob/v0.1.0/lib/mysql2-cs-bind.rb#L45-L57
+      def db_quote(rawvalue)
+        if rawvalue.nil?
+          'NULL'
+        elsif rawvalue == true
+          'TRUE'
+        elsif rawvalue == false
+          'FALSE'
+        elsif rawvalue.respond_to?(:strftime)
+          "'#{rawvalue.strftime('%Y-%m-%d %H:%M:%S')}'"
+        else
+          "'#{Mysql2::Client.escape(rawvalue.to_s)}'"
+        end
+      end
+
       def save_isu_image_file(jia_user_id:, jia_isu_uuid:, image:)
         assert_front!
         File.open(File.join(ISU_UPLOAD_DIR, "#{jia_user_id}_#{jia_isu_uuid}"), "wb") do |f|
@@ -740,11 +755,8 @@ module Isucondition
           halt_error 400, 'bad request body' unless valid_condition_format?(cond.fetch(:condition))
 
           timestamp = Time.at(cond.fetch(:timestamp))
-          db_timestamp = timestamp.strftime("%Y-%m-%d %H:%M:%S")
 
-          db_is_sitting = cond.fetch(:is_sitting) ? 1 : 0
-
-          sql_values << "('#{jia_isu_uuid}', '#{db_timestamp}', '#{db_is_sitting}', '#{cond.fetch(:condition)}', '#{cond.fetch(:message)}'), "
+          sql_values << "(#{db_quote(jia_isu_uuid)}, #{db_quote(timestamp)}, #{db_quote(cond.fetch(:is_sitting))}, #{(db_quotecond.fetch(:condition))}, #{db_quote(cond.fetch(:message))}), "
         end
         sql = sql_prefix + sql_values.delete_suffix(", ")
         db.xquery(sql)
