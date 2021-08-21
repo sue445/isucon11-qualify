@@ -99,10 +99,10 @@ namespace :deploy do
       # memcached
       case name
       when :host01
-        # exec ip_address, "sudo cp infra/memcached/memcached.conf /etc/memcached.conf"
-        # exec ip_address, "sudo systemctl restart memcached"
+        exec ip_address, "sudo cp infra/memcached/memcached.conf /etc/memcached.conf"
+        exec ip_address, "sudo systemctl restart memcached"
       else
-        # exec ip_address, "sudo systemctl stop memcached"
+        exec ip_address, "sudo systemctl stop memcached"
       end
 
       # redis

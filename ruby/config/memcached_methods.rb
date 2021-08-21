@@ -29,4 +29,11 @@ module MemcachedMethods
       actual
     end
   end
+
+  def initialize_memcached
+  end
+
+  def save_image_to_memcached
+
+  end
 end
