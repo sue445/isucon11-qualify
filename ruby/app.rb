@@ -107,7 +107,7 @@ module Isucondition
         # dirs.each do |dir|
         #   FileUtils.cp(PUBLIC_INDEX_PATH, File.join(dir, "index.html"))
         # end
-        File.join(PUBLIC_BASE_ISU_DIR, jia_isu_uuid)
+        FileUtils.mkdir_p(File.join(PUBLIC_BASE_ISU_DIR, jia_isu_uuid))
         FileUtils.cp(PUBLIC_INDEX_PATH, File.join(PUBLIC_BASE_ISU_DIR, jia_isu_uuid, "graph"))
         FileUtils.cp(PUBLIC_INDEX_PATH, File.join(PUBLIC_BASE_ISU_DIR, jia_isu_uuid, "condition"))
       end
