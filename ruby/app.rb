@@ -15,7 +15,7 @@ require_relative "./config/memcached_methods"
 require_relative "./config/redis_methods"
 
 # TODO: 終了直前にコメントアウトする
-require_relative "./config/enable_monitoring"
+# require_relative "./config/enable_monitoring"
 
 $index_html = File.read(File.join("../public", 'index.html'))
 

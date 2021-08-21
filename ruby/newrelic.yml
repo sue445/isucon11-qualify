@@ -52,15 +52,15 @@ production:
   <<: *default_settings
 
 # TODO: 終了直前に諸々無効化する
-#  agent_enabled: false
-#  monitor_mode: false
-#
-#  transaction_tracer:
-#    explain_enabled: false
-#
-#  slow_sql:
-#    enabled: false
-#    explain_enabled: false
-#
-#  thread_profiler:
-#    enabled: false
+  agent_enabled: false
+  monitor_mode: false
+
+  transaction_tracer:
+    explain_enabled: false
+
+  slow_sql:
+    enabled: false
+    explain_enabled: false
+
+  thread_profiler:
+    enabled: false

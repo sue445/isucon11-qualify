@@ -51,9 +51,9 @@ namespace :deploy do
       exec ip_address, "sudo systemctl daemon-reload"
 
       # TODO: 終了10分前にdisableすること！！！！！！
-      exec ip_address, "sudo systemctl restart newrelic-infra"
-      # exec ip_address, "sudo systemctl disable newrelic-infra"
-      # exec ip_address, "sudo systemctl stop newrelic-infra"
+      # exec ip_address, "sudo systemctl restart newrelic-infra"
+      exec ip_address, "sudo systemctl disable newrelic-infra"
+      exec ip_address, "sudo systemctl stop newrelic-infra"
       # exec ip_address, "sudo systemctl enable newrelic-infra"
       # exec ip_address, "sudo systemctl start newrelic-infra"
 
