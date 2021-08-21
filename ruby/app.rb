@@ -855,6 +855,11 @@ module Isucondition
       #   save_latest_isu_condition_to_memcached(row)
       # end
 
+      # DB更新後にmemcachedを消す
+      jia_isu_uuids.each do |uuid|
+        delete_latest_isu_condition_from_memcached(uuid)
+      end
+
       # DB更新後にredisに入れる
       # rows = db.xquery("SELECT * FROM isu_condition WHERE jia_isu_uuid IN (?)", jia_isu_uuids)
       # rows.each do |row|

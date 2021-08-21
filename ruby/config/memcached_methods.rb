@@ -84,6 +84,13 @@ module MemcachedMethods
   rescue Dalli::RingError
   end
 
+  def delete_latest_isu_condition_from_memcached(jia_isu_uuid)
+    $memcached.with do |conn|
+      conn.delete(jia_isu_uuid)
+    end
+  rescue Dalli::RingError
+  end
+
   def get_latest_isu_condition_from_memcached(jia_isu_uuid)
     $memcached.with do |conn|
       cache_key = "latest-isu-condition-#{jia_isu_uuid}"
