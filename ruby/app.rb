@@ -785,15 +785,23 @@ module Isucondition
         sql_prefix = "INSERT INTO `isu_condition` (`jia_isu_uuid`, `timestamp`, `is_sitting`, `condition`, `message`) VALUES "
         sql_values = ""
 
+        jia_isu_uuids = []
         json_params.each do |cond|
           halt_error 400, 'bad request body' unless valid_condition_format?(cond.fetch(:condition))
 
           timestamp = Time.at(cond.fetch(:timestamp))
 
           sql_values << "(#{db_quote(jia_isu_uuid)}, #{db_quote(timestamp)}, #{db_quote(cond.fetch(:is_sitting))}, #{db_quote(cond.fetch(:condition))}, #{db_quote(cond.fetch(:message))}), "
+          jia_isu_uuids << jia_isu_uuid
         end
         sql = sql_prefix + sql_values.delete_suffix(", ")
         db.xquery(sql)
+      end
+
+      # DB更新後にmemcachedに入れる
+      rows = db.xquery("SELECT * FROM isu_condition WHERE jia_isu_uuid IN (?)", jia_isu_uuids)
+      rows.each do |row|
+        save_latest_isu_condition_to_memcached(row)
       end
 
       status 202
