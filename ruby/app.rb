@@ -412,7 +412,7 @@ module Isucondition
       jia_isu_uuid = params[:jia_isu_uuid]
 
       # isu = db.xquery('SELECT * FROM `isu` WHERE `jia_user_id` = ? AND `jia_isu_uuid` = ?', jia_user_id, jia_isu_uuid).first
-      isu = db.xquery('SELECT id, jia_isu_uuid, name, character, character, jia_user_id FROM `isu` WHERE `jia_user_id` = ? AND `jia_isu_uuid` = ?', jia_user_id, jia_isu_uuid).first
+      isu = db.xquery('SELECT id, jia_isu_uuid, name, `character`, jia_user_id FROM `isu` WHERE `jia_user_id` = ? AND `jia_isu_uuid` = ?', jia_user_id, jia_isu_uuid).first
 
       halt_error 404, 'not found: isu' unless isu
 
