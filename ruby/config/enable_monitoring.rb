@@ -35,14 +35,14 @@ end
 class Sinatra::Base
   use Sentry::Rack::CaptureExceptions
 
-  use StackProf::Middleware,
-      mode: :cpu,
-      interval: 1000,
-      raw: true,
-      save_every: 100,
-      path: "tmp/stackprof/",
-      # 特定のPATHのみstackprofを有効化する
-      enabled: -> (env) { enabled_stackprof_path?(env) }
+  # use StackProf::Middleware,
+  #     mode: :cpu,
+  #     interval: 1000,
+  #     raw: true,
+  #     save_every: 100,
+  #     path: "tmp/stackprof/",
+  #     # 特定のPATHのみstackprofを有効化する
+  #     enabled: -> (env) { enabled_stackprof_path?(env) }
 end
 
 module Mysql2ClientQueryWithNewRelic
