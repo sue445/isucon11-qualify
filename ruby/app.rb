@@ -14,6 +14,8 @@ require_relative "./config/enable_monitoring"
 
 $index_html = File.read(File.join("../public", 'index.html'))
 
+ISU_UPLOAD_DIR = "/home/isucon/webapp/public/uploads/isu"
+
 module Isucondition
   class App < Sinatra::Base
     include SentryMethods
@@ -188,6 +190,15 @@ module Isucondition
         'jia_service_url',
         jia_service_url,
       )
+
+      # isuのimageをローカルに保存
+      system_with_sentry "rm -rf #{ISU_UPLOAD_DIR}/*"
+      rows = db.xquery("SELECT id, image FROM isu")
+      rows.each do |isu|
+        File.open(File.join(ISU_UPLOAD_DIR, isu[:id]), "wb") do |f|
+          f.write(isu.fetch(:image))
+        end
+      end
 
       content_type :json
       { language: 'ruby' }.to_json
