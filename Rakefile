@@ -149,7 +149,7 @@ multitask :deploy => HOSTS.keys.map { |name| "deploy:#{name}" }
 
 desc "POST /initialize"
 task :initialize do
-  sh "curl -X POST --retry 3 --fail #{INITIALIZE_ENDPOINT}"
+  # sh "curl -X POST --retry 3 --fail #{INITIALIZE_ENDPOINT}"
 end
 
 desc "Record current commit to issue"
