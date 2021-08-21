@@ -670,17 +670,18 @@ module Isucondition
       ''
     end
 
-    # %w(
-    #   /
-    #   /register
-    #   /isu/:jia_isu_uuid
-    #   /isu/:jia_isu_uuid/condition
-    #   /isu/:jia_isu_uuid/graph
-    # ).each do |_|
-    #   get _ do
-    #     content_type :html
-    #     File.read(File.join(FRONTEND_CONTENTS_PATH, 'index.html'))
-    #   end
-    # end
+    [
+      # "/",
+      # FIXME: 後でnginxで返す
+      "/register",
+      "/isu/:jia_isu_uuid",
+      "/isu/:jia_isu_uuid/condition",
+      "/isu/:jia_isu_uuid/graph",
+    ].each do |_|
+      get _ do
+        content_type :html
+        File.read(File.join(FRONTEND_CONTENTS_PATH, 'index.html'))
+      end
+    end
   end
 end
