@@ -31,9 +31,32 @@ module MemcachedMethods
   end
 
   def initialize_memcached
+    $memcached.with do |conn|
+      conn.flush
+    end
+
+    # isuのimageをmemcachedに保存
+    rows = db.xquery("SELECT jia_user_id, jia_isu_uuid, image FROM isu")
+    rows.each do |isu|
+      save_isu_image_to_memcached(
+        jia_user_id: isu.fetch(:jia_user_id),
+        jia_isu_uuid: isu.fetch(:jia_isu_uuid),
+        image: isu.fetch(:image)
+      )
+    end
   end
 
-  def save_image_to_memcached
+  def save_isu_image_to_memcached(jia_user_id:, jia_isu_uuid:, image:)
+    $memcached.with do |conn|
+      cache_key = "isu-image-#{jia_user_id}-#{jia_isu_uuid}"
+      conn.set(cache_key, image)
+    end
+  end
 
+  def get_isu_image_from_memcached(jia_user_id:, jia_isu_uuid:)
+    $memcached.with do |conn|
+      cache_key = "isu-image-#{jia_user_id}-#{jia_isu_uuid}"
+      conn.get(cache_key)
+    end
   end
 end

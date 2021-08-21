@@ -21,6 +21,8 @@ ISU_UPLOAD_DIR = "/home/isucon/webapp/public/uploads/isu"
 module Isucondition
   class App < Sinatra::Base
     include SentryMethods
+    include MemcachedMethods
+
     using HashToJsonWithOj
 
     configure :development do
@@ -260,16 +262,18 @@ module Isucondition
     end
 
     def initialize_common
-      # isuのimageをローカルに保存
-      system_with_sentry "rm -rf #{ISU_UPLOAD_DIR}/*"
-      rows = db.xquery("SELECT jia_user_id, jia_isu_uuid, image FROM isu")
-      rows.each do |isu|
-        save_isu_image_file(
-          jia_user_id: isu.fetch(:jia_user_id),
-          jia_isu_uuid: isu.fetch(:jia_isu_uuid),
-          image: isu.fetch(:image)
-        )
-      end
+      # # isuのimageをローカルに保存
+      # system_with_sentry "rm -rf #{ISU_UPLOAD_DIR}/*"
+      # rows = db.xquery("SELECT jia_user_id, jia_isu_uuid, image FROM isu")
+      # rows.each do |isu|
+      #   save_isu_image_file(
+      #     jia_user_id: isu.fetch(:jia_user_id),
+      #     jia_isu_uuid: isu.fetch(:jia_isu_uuid),
+      #     image: isu.fetch(:image)
+      #   )
+      # end
+
+      initialize_memcached
     end
 
     # サインアップ・サインイン
@@ -390,7 +394,12 @@ module Isucondition
         db.xquery('SELECT * FROM `isu` WHERE `jia_user_id` = ? AND `jia_isu_uuid` = ?', jia_user_id, jia_isu_uuid).first
       end
 
-      save_isu_image_file(
+      # save_isu_image_file(
+      #   jia_user_id: isu.fetch(:jia_user_id),
+      #   jia_isu_uuid: isu.fetch(:jia_isu_uuid),
+      #   image: isu.fetch(:image)
+      # )
+      save_isu_image_to_memcached(
         jia_user_id: isu.fetch(:jia_user_id),
         jia_isu_uuid: isu.fetch(:jia_isu_uuid),
         image: isu.fetch(:image)
@@ -441,7 +450,8 @@ module Isucondition
       #
       # isu.fetch(:image)
 
-      image = get_isu_image_file(jia_user_id: jia_user_id, jia_isu_uuid: jia_isu_uuid)
+      # image = get_isu_image_file(jia_user_id: jia_user_id, jia_isu_uuid: jia_isu_uuid)
+      image = get_isu_image_from_memcached(jia_user_id: jia_user_id, jia_isu_uuid: jia_isu_uuid)
       unless image
         halt_error 404, 'not found: isu'
       end

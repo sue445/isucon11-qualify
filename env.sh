@@ -7,3 +7,6 @@ MYSQL_USER=isucon
 MYSQL_DBNAME=isucondition
 MYSQL_PASS=isucon
 POST_ISUCONDITION_TARGET_BASE_URL="https://isucondition-1.t.isucon.dev"
+
+# host01
+MEMCACHED_HOST="192.168.0.11"

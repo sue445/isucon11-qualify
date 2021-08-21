@@ -2,6 +2,8 @@ GEM
   remote: https://rubygems.org/
   specs:
     concurrent-ruby (1.1.9)
+    connection_pool (2.2.5)
+    dalli (2.7.11)
     faraday (1.7.0)
       faraday-em_http (~> 1.0)
       faraday-em_synchrony (~> 1.0)
@@ -70,6 +72,8 @@ PLATFORMS
   ruby
 
 DEPENDENCIES
+  connection_pool
+  dalli
   jwt
   mysql2
   mysql2-cs-bind
