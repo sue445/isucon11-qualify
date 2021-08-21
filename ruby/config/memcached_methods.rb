@@ -62,6 +62,7 @@ module MemcachedMethods
       cache_key = "isu-image-#{jia_user_id}-#{jia_isu_uuid}"
       conn.set(cache_key, image)
     end
+  rescue Dalli::RingError
   end
 
   def get_isu_image_from_memcached(jia_user_id:, jia_isu_uuid:)
@@ -80,6 +81,7 @@ module MemcachedMethods
         conn.set(cache_key, isu_condition)
       end
     end
+  rescue Dalli::RingError
   end
 
   def get_latest_isu_condition_from_memcached(jia_isu_uuid)
