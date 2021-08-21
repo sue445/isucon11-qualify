@@ -4,9 +4,13 @@ environment "production"
 
 port '3000', '0.0.0.0'
 
-threads 0, 32
-
-workers 32
+if `hostname`.strip == "isucon11-qualify-01"
+  threads 0, 32
+  workers 32
+else
+  threads 0, 32
+  workers 48
+end
 
 preload_app!
 
