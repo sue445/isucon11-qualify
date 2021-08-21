@@ -56,4 +56,46 @@ module RedisMethods
     keys = $redis.keys("generate_isu_graph_response:#{jia_isu_uuid}:*")
     $redis.del(*keys)
   end
+
+  def save_isu_image_to_redis(jia_user_id:, jia_isu_uuid:, image:)
+    cache_key = "isu-image-#{jia_user_id}-#{jia_isu_uuid}"
+    data = { image: image }
+    $redis.set(cache_key, data = Oj.dump(data))
+  end
+
+  def get_isu_image_from_redis(jia_user_id:, jia_isu_uuid:)
+    cache_key = "isu-image-#{jia_user_id}-#{jia_isu_uuid}"
+    data = $redis.get(cache_key)
+
+    if data
+      return Oj.load(data).transform_keys(&:to_sym)
+    end
+
+    nil
+  end
+
+  def save_latest_isu_condition_to_redis(isu_condition)
+    cache_key = "latest-isu-condition-#{isu_condition.fetch(:jia_isu_uuid)}"
+
+    cache = $redis.get(cache_key)
+    if !cache
+      current = Oj.load(cache)
+
+      if isu_condition[:timestamp] >= current["timestamp"]
+        conn.set(cache_key, Oj.dump(isu_condition))
+      end
+
+    end
+  end
+
+  def get_latest_isu_condition_from_redis(jia_isu_uuid)
+    cache_key = "latest-isu-condition-#{jia_isu_uuid}"
+    cache = $redis.get(cache_key)
+
+    if cache
+      Oj.load(cache).transform_keys(&:to_sym)
+    end
+
+    nil
+  end
 end
