@@ -778,7 +778,11 @@ module Isucondition
           #   end
           # end
 
-          isu_last_condition = db.xquery('SELECT * FROM `isu_condition` WHERE `jia_isu_uuid` = ? ORDER BY timestamp DESC LIMIT 1', isu.fetch(:jia_isu_uuid)).first
+          isu_last_condition =
+            with_memcached("latest-isu-condition-#{isu.fetch(:jia_isu_uuid)}") do
+              db.xquery('SELECT * FROM `isu_condition` WHERE `jia_isu_uuid` = ? ORDER BY timestamp DESC LIMIT 1', isu.fetch(:jia_isu_uuid)).first
+            end
+
           if isu_last_condition
             condition_level = calculate_condition_level(isu_last_condition.fetch(:condition))
             trend_condition = { isu_id: isu.fetch(:id), timestamp: isu_last_condition.fetch(:timestamp).to_i }
