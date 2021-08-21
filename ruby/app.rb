@@ -6,8 +6,16 @@ require 'uri'
 require 'mysql2'
 require 'mysql2-cs-bind'
 
+# TODO: Sinatra app内で include SentryMethods する
+require_relative "./config/sentry_methods"
+
+# TODO: 終了直前にコメントアウトする
+require_relative "./config/enable_monitoring"
+
 module Isucondition
   class App < Sinatra::Base
+    include SentryMethods
+
     configure :development do
       require 'sinatra/reloader'
       register Sinatra::Reloader
