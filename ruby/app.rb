@@ -754,63 +754,67 @@ module Isucondition
 
     # ISUの性格毎の最新のコンディション情報
     get '/api/trend' do
-      character_list = db.query('SELECT `character` FROM `isu` GROUP BY `character`')
+      res_json =
+        with_memcached("/api/trend-#{Time.now.to_i}") do
+          character_list = db.query('SELECT `character` FROM `isu` GROUP BY `character`')
 
-      res = character_list.map do |character|
-        isu_list = db.xquery('SELECT * FROM `isu` WHERE `character` = ?', character.fetch(:character))
-        character_info_isu_conditions = []
-        character_warning_isu_conditions = []
-        character_critical_isu_conditions = []
+          res = character_list.map do |character|
+            isu_list = db.xquery('SELECT * FROM `isu` WHERE `character` = ?', character.fetch(:character))
+            character_info_isu_conditions = []
+            character_warning_isu_conditions = []
+            character_critical_isu_conditions = []
 
-        isu_list.each do |isu|
-          # conditions = db.xquery('SELECT * FROM `isu_condition` WHERE `jia_isu_uuid` = ? ORDER BY timestamp DESC', isu.fetch(:jia_isu_uuid)).to_a
-          # unless conditions.empty?
-          #   isu_last_condition = conditions.first
-          #   condition_level = calculate_condition_level(isu_last_condition.fetch(:condition))
-          #   trend_condition = { isu_id: isu.fetch(:id), timestamp: isu_last_condition.fetch(:timestamp).to_i }
-          #   case condition_level
-          #   when 'info'
-          #     character_info_isu_conditions.push(trend_condition)
-          #   when 'warning'
-          #     character_warning_isu_conditions.push(trend_condition)
-          #   when 'critical'
-          #     character_critical_isu_conditions.push(trend_condition)
-          #   end
-          # end
+            isu_list.each do |isu|
+              # conditions = db.xquery('SELECT * FROM `isu_condition` WHERE `jia_isu_uuid` = ? ORDER BY timestamp DESC', isu.fetch(:jia_isu_uuid)).to_a
+              # unless conditions.empty?
+              #   isu_last_condition = conditions.first
+              #   condition_level = calculate_condition_level(isu_last_condition.fetch(:condition))
+              #   trend_condition = { isu_id: isu.fetch(:id), timestamp: isu_last_condition.fetch(:timestamp).to_i }
+              #   case condition_level
+              #   when 'info'
+              #     character_info_isu_conditions.push(trend_condition)
+              #   when 'warning'
+              #     character_warning_isu_conditions.push(trend_condition)
+              #   when 'critical'
+              #     character_critical_isu_conditions.push(trend_condition)
+              #   end
+              # end
 
-          isu_last_condition =
-            with_memcached("latest-isu-condition-#{isu.fetch(:jia_isu_uuid)}") do
-              db.xquery('SELECT * FROM `isu_condition` WHERE `jia_isu_uuid` = ? ORDER BY timestamp DESC LIMIT 1', isu.fetch(:jia_isu_uuid)).first
+              isu_last_condition =
+                with_memcached("latest-isu-condition-#{isu.fetch(:jia_isu_uuid)}") do
+                  db.xquery('SELECT * FROM `isu_condition` WHERE `jia_isu_uuid` = ? ORDER BY timestamp DESC LIMIT 1', isu.fetch(:jia_isu_uuid)).first
+                end
+
+              if isu_last_condition
+                condition_level = calculate_condition_level(isu_last_condition.fetch(:condition))
+                trend_condition = { isu_id: isu.fetch(:id), timestamp: isu_last_condition.fetch(:timestamp).to_i }
+                case condition_level
+                when 'info'
+                  character_info_isu_conditions.push(trend_condition)
+                when 'warning'
+                  character_warning_isu_conditions.push(trend_condition)
+                when 'critical'
+                  character_critical_isu_conditions.push(trend_condition)
+                end
+              end
             end
 
-          if isu_last_condition
-            condition_level = calculate_condition_level(isu_last_condition.fetch(:condition))
-            trend_condition = { isu_id: isu.fetch(:id), timestamp: isu_last_condition.fetch(:timestamp).to_i }
-            case condition_level
-            when 'info'
-              character_info_isu_conditions.push(trend_condition)
-            when 'warning'
-              character_warning_isu_conditions.push(trend_condition)
-            when 'critical'
-              character_critical_isu_conditions.push(trend_condition)
-            end
+            character_info_isu_conditions.sort! { |a,b| b.fetch(:timestamp) <=> a.fetch(:timestamp) }
+            character_warning_isu_conditions.sort! { |a,b| b.fetch(:timestamp) <=> a.fetch(:timestamp) }
+            character_critical_isu_conditions.sort! { |a,b| b.fetch(:timestamp) <=> a.fetch(:timestamp) }
+
+            {
+              character: character.fetch(:character),
+              info: character_info_isu_conditions,
+              warning: character_warning_isu_conditions,
+              critical: character_critical_isu_conditions,
+            }
           end
-        end
-
-        character_info_isu_conditions.sort! { |a,b| b.fetch(:timestamp) <=> a.fetch(:timestamp) }
-        character_warning_isu_conditions.sort! { |a,b| b.fetch(:timestamp) <=> a.fetch(:timestamp) }
-        character_critical_isu_conditions.sort! { |a,b| b.fetch(:timestamp) <=> a.fetch(:timestamp) }
-
-        {
-          character: character.fetch(:character),
-          info: character_info_isu_conditions,
-          warning: character_warning_isu_conditions,
-          critical: character_critical_isu_conditions,
-        }
+        res.to_json
       end
 
       content_type :json
-      res.to_json
+      res_json
     end
 
     # ISUからのコンディションを受け取る
