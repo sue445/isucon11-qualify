@@ -14,7 +14,7 @@ common: &default_settings
 
   # Your application name. Renaming here affects where data displays in New
   # Relic.  For more details, see https://docs.newrelic.com/docs/apm/new-relic-apm/maintenance/renaming-applications
-  app_name: isuconXX-qualify
+  app_name: isucon11-qualify
 
   # To disable the agent regardless of other settings, uncomment the following:
   # agent_enabled: false
@@ -42,11 +42,11 @@ common: &default_settings
 # If your application has other named environments, configure them here.
 development:
   <<: *default_settings
-  app_name: isuconXX-qualify (Development)
+  app_name: isucon11-qualify (Development)
 
 staging:
   <<: *default_settings
-  app_name: isuconXX-qualify (Staging)
+  app_name: isucon11-qualify (Staging)
 
 production:
   <<: *default_settings
