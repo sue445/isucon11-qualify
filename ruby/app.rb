@@ -719,19 +719,30 @@ module Isucondition
         count = db.xquery('SELECT COUNT(*) AS `cnt` FROM `isu` WHERE `jia_isu_uuid` = ?', jia_isu_uuid).first
         halt_error 404, 'not found: isu' if count.fetch(:cnt).zero?
 
+        # json_params.each do |cond|
+        #   timestamp = Time.at(cond.fetch(:timestamp))
+        #   halt_error 400, 'bad request body' unless valid_condition_format?(cond.fetch(:condition))
+        #
+        #   db.xquery(
+        #     'INSERT INTO `isu_condition` (`jia_isu_uuid`, `timestamp`, `is_sitting`, `condition`, `message`) VALUES (?, ?, ?, ?, ?)',
+        #     jia_isu_uuid,
+        #     timestamp,
+        #     cond.fetch(:is_sitting),
+        #     cond.fetch(:condition),
+        #     cond.fetch(:message),
+        #   )
+        # end
+
+        sql_prefix = "INSERT INTO `isu_condition` (`jia_isu_uuid`, `timestamp`, `is_sitting`, `condition`, `message`) VALUES "
+        sql_values = ""
+
         json_params.each do |cond|
-          timestamp = Time.at(cond.fetch(:timestamp))
           halt_error 400, 'bad request body' unless valid_condition_format?(cond.fetch(:condition))
 
-          db.xquery(
-            'INSERT INTO `isu_condition` (`jia_isu_uuid`, `timestamp`, `is_sitting`, `condition`, `message`) VALUES (?, ?, ?, ?, ?)',
-            jia_isu_uuid,
-            timestamp,
-            cond.fetch(:is_sitting),
-            cond.fetch(:condition),
-            cond.fetch(:message),
-          )
+          sql_values << "('#{jia_isu_uuid}', '#{cond.fetch(:timestamp)}', '#{cond.fetch(:is_sitting)}', '#{cond.fetch(:condition)}', '#{cond.fetch(:message)}'), "
         end
+        sql = sql_prefix + sql_values.delete_suffix(", ")
+        db.xquery.xquery(sql)
       end
 
       status 202
