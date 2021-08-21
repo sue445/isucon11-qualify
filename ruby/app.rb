@@ -354,8 +354,8 @@ module Isucondition
         isu_list = db.xquery('SELECT * FROM `isu` WHERE `jia_user_id` = ? ORDER BY `id` DESC', jia_user_id)
         isu_list.map do |isu|
           # last_condition = db.xquery('SELECT * FROM `isu_condition` WHERE `jia_isu_uuid` = ? ORDER BY `timestamp` DESC LIMIT 1', isu.fetch(:jia_isu_uuid)).first
-          last_condition = get_latest_isu_condition_from_memcached(isu.fetch(:jia_isu_uuid))
-          # last_condition = get_latest_isu_condition_from_redis(isu.fetch(:jia_isu_uuid))
+          # last_condition = get_latest_isu_condition_from_memcached(isu.fetch(:jia_isu_uuid))
+          last_condition = get_latest_isu_condition_from_redis(isu.fetch(:jia_isu_uuid))
 
           formatted_condition = last_condition ? {
             jia_isu_uuid: last_condition.fetch(:jia_isu_uuid),
@@ -840,16 +840,16 @@ module Isucondition
       end
 
       # DB更新後にmemcachedに入れる
-      rows = db.xquery("SELECT * FROM isu_condition WHERE jia_isu_uuid IN (?)", jia_isu_uuids)
-      rows.each do |row|
-        save_latest_isu_condition_to_memcached(row)
-      end
-
-      # DB更新後にredisに入れる
       # rows = db.xquery("SELECT * FROM isu_condition WHERE jia_isu_uuid IN (?)", jia_isu_uuids)
       # rows.each do |row|
-      #   save_latest_isu_condition_to_redis(row)
+      #   save_latest_isu_condition_to_memcached(row)
       # end
+
+      # DB更新後にredisに入れる
+      rows = db.xquery("SELECT * FROM isu_condition WHERE jia_isu_uuid IN (?)", jia_isu_uuids)
+      rows.each do |row|
+        save_latest_isu_condition_to_redis(row)
+      end
 
       # DB更新後にグラフデータをredisから消す
       jia_isu_uuids.each do |uuid|
