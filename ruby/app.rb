@@ -742,7 +742,9 @@ module Isucondition
           timestamp = Time.at(cond.fetch(:timestamp))
           db_timestamp = timestamp.strftime("%Y-%m-%d %H:%M:%S")
 
-          sql_values << "('#{jia_isu_uuid}', '#{db_timestamp}', '#{cond.fetch(:is_sitting)}', '#{cond.fetch(:condition)}', '#{cond.fetch(:message)}'), "
+          db_is_sitting = cond.fetch(:is_sitting) ? 1 : 0
+
+          sql_values << "('#{jia_isu_uuid}', '#{db_timestamp}', '#{db_is_sitting}', '#{cond.fetch(:condition)}', '#{cond.fetch(:message)}'), "
         end
         sql = sql_prefix + sql_values.delete_suffix(", ")
         db.xquery(sql)
