@@ -10,6 +10,7 @@ require 'mysql2-cs-bind'
 require_relative "./config/sentry_methods"
 
 require_relative "./config/hash_to_json_with_oj"
+require_relative "./config/memcached_methods"
 
 # TODO: 終了直前にコメントアウトする
 require_relative "./config/enable_monitoring"
