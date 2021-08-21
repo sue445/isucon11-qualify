@@ -1,2 +1,3 @@
 /sql/1_InitData.sql
 ruby/vendor/
+ruby/log/
