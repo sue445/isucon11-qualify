@@ -181,7 +181,8 @@ module Isucondition
       end
       halt_error 400, 'bad request body' unless jia_service_url
 
-      system('../sql/init.sh', out: :err, exception: true)
+      # system('../sql/init.sh', out: :err, exception: true)
+      system_with_sentry('../sql/init.sh')
       db.xquery(
         'INSERT INTO `isu_association_config` (`name`, `url`) VALUES (?, ?) ON DUPLICATE KEY UPDATE `url` = VALUES(`url`)',
         'jia_service_url',
