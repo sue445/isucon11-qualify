@@ -497,8 +497,13 @@ module Isucondition
       # isu.fetch(:image)
 
       # image = get_isu_image_file(jia_user_id: jia_user_id, jia_isu_uuid: jia_isu_uuid)
-      image = get_isu_image_from_memcached(jia_user_id: jia_user_id, jia_isu_uuid: jia_isu_uuid)
+      # image = get_isu_image_from_memcached(jia_user_id: jia_user_id, jia_isu_uuid: jia_isu_uuid)
       # image = get_isu_image_from_redis(jia_user_id: jia_user_id, jia_isu_uuid: jia_isu_uuid)
+      image =
+        with_memcached("isu-image-#{jia_user_id}-#{jia_isu_uuid}") do
+          get_isu_image_file(jia_user_id: jia_user_id, jia_isu_uuid: jia_isu_uuid)
+        end
+
       unless image
         halt_error 404, 'not found: isu'
       end
