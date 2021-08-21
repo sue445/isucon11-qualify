@@ -27,6 +27,7 @@ CREATE TABLE `isu_condition` (
 ) ENGINE=InnoDB DEFAULT CHARACTER SET=utf8mb4;
 
 ALTER TABLE isu_condition ADD INDEX timestamp(timestamp);
+ALTER TABLE isu_condition ADD INDEX jia_isu_uuid(jia_isu_uuid);
 
 CREATE TABLE `user` (
   `jia_user_id` VARCHAR(255) PRIMARY KEY,
