@@ -33,6 +33,9 @@ module Isucondition
       register Sinatra::Reloader
     end
 
+    PUBLIC_BASE_ISU_DIR = "/home/isucon/webapp/public/isu"
+    PUBLIC_INDEX_PATH = "/home/isucon/webapp/public/index.html"
+
     SESSION_NAME = 'isucondition_ruby'
     CONDITION_LIMIT = 20
     FRONTEND_CONTENTS_PATH = '../public'
@@ -92,6 +95,19 @@ module Isucondition
     end
 
     helpers do
+      def create_isu_dir(jia_isu_uuid)
+        dirs = [
+          File.join(PUBLIC_BASE_ISU_DIR, jia_isu_uuid),
+          File.join(PUBLIC_BASE_ISU_DIR, jia_isu_uuid, "condition"),
+          File.join(PUBLIC_BASE_ISU_DIR, jia_isu_uuid, "graph"),
+        ]
+        FileUtils.mkdir_p dirs
+
+        dirs.each do |dir|
+          FileUtils.cp(PUBLIC_INDEX_PATH, File.join(dir, "index.html"))
+        end
+      end
+
       # ref. https://github.com/tagomoris/mysql2-cs-bind/blob/v0.1.0/lib/mysql2-cs-bind.rb#L45-L57
       def db_quote(rawvalue)
         if rawvalue.nil?
@@ -276,6 +292,12 @@ module Isucondition
       #   )
       # end
 
+      system_with_sentry "rm -rf #{PUBLIC_BASE_ISU_DIR}/*"
+      uuids = db.xquery("SELECT jia_isu_uuid FROM isu").map(&:jia_isu_uuid)
+      uuids.each do |uuid|
+        create_isu_dir(uuid)
+      end
+
       initialize_memcached
     end
 
@@ -378,6 +400,8 @@ module Isucondition
 
           raise
         end
+
+        create_isu_dir(jia_isu_uuid)
 
         target_url = URI.parse("#{jia_service_url}/api/activate")
         http = Net::HTTP.new(target_url.host, target_url.port)
@@ -813,9 +837,9 @@ module Isucondition
       # "/",
       # FIXME: 後でnginxで返す
       "/register",
-      "/isu/:jia_isu_uuid",
-      "/isu/:jia_isu_uuid/condition",
-      "/isu/:jia_isu_uuid/graph",
+      # "/isu/:jia_isu_uuid",
+      # "/isu/:jia_isu_uuid/condition",
+      # "/isu/:jia_isu_uuid/graph",
     ].each do |_|
       get _ do
         content_type :html
