@@ -10,7 +10,8 @@ Environment=RACK_ENV=production
 
 User=isucon
 Group=isucon
-ExecStart=/home/isucon/local/ruby/bin/bundle exec puma -p 3000
+# ExecStart=/home/isucon/local/ruby/bin/bundle exec puma -p 3000
+ExecStart=/home/isucon/local/ruby/bin/bundle exec puma -C /home/isucon/webapp/ruby/config/puma.rb
 ExecStop=/bin/kill -s QUIT $MAINPID
 
 Restart   = always

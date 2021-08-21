@@ -2,7 +2,7 @@
 
 environment "production"
 
-port '8000', '0.0.0.0'
+port '3000', '0.0.0.0'
 
 threads 0, 16
 
