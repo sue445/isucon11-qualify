@@ -763,9 +763,23 @@ module Isucondition
         character_critical_isu_conditions = []
 
         isu_list.each do |isu|
-          conditions = db.xquery('SELECT * FROM `isu_condition` WHERE `jia_isu_uuid` = ? ORDER BY timestamp DESC', isu.fetch(:jia_isu_uuid)).to_a
-          unless conditions.empty?
-            isu_last_condition = conditions.first
+          # conditions = db.xquery('SELECT * FROM `isu_condition` WHERE `jia_isu_uuid` = ? ORDER BY timestamp DESC', isu.fetch(:jia_isu_uuid)).to_a
+          # unless conditions.empty?
+          #   isu_last_condition = conditions.first
+          #   condition_level = calculate_condition_level(isu_last_condition.fetch(:condition))
+          #   trend_condition = { isu_id: isu.fetch(:id), timestamp: isu_last_condition.fetch(:timestamp).to_i }
+          #   case condition_level
+          #   when 'info'
+          #     character_info_isu_conditions.push(trend_condition)
+          #   when 'warning'
+          #     character_warning_isu_conditions.push(trend_condition)
+          #   when 'critical'
+          #     character_critical_isu_conditions.push(trend_condition)
+          #   end
+          # end
+
+          isu_last_condition = db.xquery('SELECT * FROM `isu_condition` WHERE `jia_isu_uuid` = ? ORDER BY timestamp DESC LIMIT 1', isu.fetch(:jia_isu_uuid)).first
+          if isu_last_condition
             condition_level = calculate_condition_level(isu_last_condition.fetch(:condition))
             trend_condition = { isu_id: isu.fetch(:id), timestamp: isu_last_condition.fetch(:timestamp).to_i }
             case condition_level
