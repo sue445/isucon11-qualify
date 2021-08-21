@@ -24,7 +24,7 @@ CURRENT_DIR = "/home/isucon/webapp"
 RUBY_APP_DIR = "/home/isuconwebapp/ruby"
 
 # アプリのservice名
-APP_SERVICE_NAME = "54.249.131.215"
+APP_SERVICE_NAME = "isucondition.ruby.service"
 
 # デプロイを記録するissue
 GITHUB_REPO     = "sue445/isucon11-qualify"
