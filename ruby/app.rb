@@ -103,7 +103,7 @@ module Isucondition
         ]
         FileUtils.mkdir_p dirs
 
-        FileUtils.cp(PUBLIC_INDEX_PATH, File.join(PUBLIC_INDEX_PATH, jia_isu_uuid))
+        FileUtils.cp(PUBLIC_INDEX_PATH, File.join(PUBLIC_BASE_ISU_DIR, jia_isu_uuid))
         dirs.each do |dir|
           FileUtils.cp(PUBLIC_INDEX_PATH, File.join(dir, "index.html"))
         end
