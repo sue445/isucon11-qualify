@@ -83,7 +83,7 @@ module RedisMethods
     data = $redis.get(cache_key)
 
     if data
-      return Oj.load(data).transform_keys(&:to_sym)
+      return Oj.load(data)["image"]
     end
 
     nil
