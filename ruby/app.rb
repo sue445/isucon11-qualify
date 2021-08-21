@@ -116,6 +116,10 @@ module Isucondition
         File.read(path)
       end
 
+      def get_isu_image_file_path(jia_user_id:, jia_isu_uuid:)
+        "/uploads/isu/#{jia_user_id}_#{jia_isu_uuid}"
+      end
+
       def assert_front!
         hostname = `hostname`.strip
         unless hostname == "isucon11-qualify-01"
