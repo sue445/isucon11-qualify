@@ -11,8 +11,8 @@
 # デプロイ先のサーバ
 HOSTS = {
   host01: "18.181.130.91", # front, db, app(uploader)
-  host02: "52.194.98.165", # app(main)
-  # host03: "54.249.131.215",
+  # host02: "54.249.131.215",
+  host03: "52.194.98.165", # app(main)
 }
 
 INITIALIZE_ENDPOINT = "https://isucondition.t.isucon.dev/initialize_from_local"
@@ -80,7 +80,7 @@ namespace :deploy do
 
       # app
       case name
-      when :host01, :host02
+      when :host01, :host03
         exec ip_address, "#{BUNDLE} install --path vendor/bundle --jobs $(nproc)", cwd: RUBY_APP_DIR
         exec ip_address, "#{BUNDLE} config set --local path 'vendor/bundle'", cwd: RUBY_APP_DIR
         exec ip_address, "#{BUNDLE} config set --local jobs $(nproc)", cwd: RUBY_APP_DIR
