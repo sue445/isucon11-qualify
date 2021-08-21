@@ -739,7 +739,10 @@ module Isucondition
         json_params.each do |cond|
           halt_error 400, 'bad request body' unless valid_condition_format?(cond.fetch(:condition))
 
-          sql_values << "('#{jia_isu_uuid}', '#{cond.fetch(:timestamp)}', '#{cond.fetch(:is_sitting)}', '#{cond.fetch(:condition)}', '#{cond.fetch(:message)}'), "
+          timestamp = Time.at(cond.fetch(:timestamp))
+          db_timestamp = timestamp.strftime("%Y-%m-%d %H:%M:%S")
+
+          sql_values << "('#{jia_isu_uuid}', '#{db_timestamp}', '#{cond.fetch(:is_sitting)}', '#{cond.fetch(:condition)}', '#{cond.fetch(:message)}'), "
         end
         sql = sql_prefix + sql_values.delete_suffix(", ")
         db.xquery(sql)
